@@ -2,6 +2,7 @@ package com.example.demouser.dice;
 
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
@@ -18,9 +18,17 @@ public class MainActivity extends AppCompatActivity {
     private int compScore = 0;
     private int userTurnScore = 0;
     private int compTurnScore = 0;
-    private boolean compTurn = false;
     private ImageView diceView;
     private final Drawable[] dice = new Drawable[6];
+
+    private TextView userScoreTV;
+    private TextView computerScoreTV;
+    private TextView status;
+
+
+    private Button rollButton;
+    private Button holdButton;
+    private Button resetButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,16 +36,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         diceView = findViewById(R.id.dice1);
-        final Button rollButton = findViewById(R.id.roll);
-        final Button holdButton = findViewById(R.id.hold);
-        final Button resetButton = findViewById(R.id.reset);
-        final TextView status = findViewById(R.id.status);
-        final TextView userScoreTV = findViewById(R.id.userTotalScore);
-        final TextView computerScoreTV = findViewById(R.id.compTotalScore);
+        rollButton = findViewById(R.id.roll);
+        holdButton = findViewById(R.id.hold);
+        resetButton = findViewById(R.id.reset);
+        status = findViewById(R.id.status);
+        userScoreTV = findViewById(R.id.userTotalScore);
+        computerScoreTV = findViewById(R.id.compTotalScore);
 
         Resources res = getResources();
 
-        int face;
         // dice pictures
         dice[0] = ContextCompat.getDrawable(this, R.drawable.dice1);
         dice[1] = ContextCompat.getDrawable(this, R.drawable.dice2);
@@ -46,41 +53,19 @@ public class MainActivity extends AppCompatActivity {
         dice[4] = ContextCompat.getDrawable(this, R.drawable.dice5);
         dice[5] = ContextCompat.getDrawable(this, R.drawable.dice6);
 
-
-
-
-//        diceView.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v) {
-//                tv.setTextSize(tv.getTextSize()+5);
-//            }
-//        });
-
         rollButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 int result = roller();
                 if(result != 1) {
-                    if(!compTurn){
-                        userTurnScore += result;
-                        status.setText("Your turn score: " + Integer.toString(userTurnScore));
-                    }
-                    else {
-                        compTurnScore += result;
-                        status.setText("Computer round score: " + Integer.toString(compTurnScore));
-                    }
+                    userTurnScore += result;
+                    status.setText("Your turn score: " + Integer.toString(userTurnScore));
                 }
                 else {
-                    if (!compTurn) {
-                        status.setText("You roll 1!");
-                        userTurnScore = 0;
-                        compTurn = true;
-                    } else {
-                        status.setText("Computer rolls 1!");
-                        compTurnScore = 0;
-                        compTurn = false;
-                    }
+                    status.setText("You roll 1! Now it's computer's turn!");
+                    userTurnScore = 0;
+                    computerTurn();
                 }
             }
         });
@@ -88,19 +73,11 @@ public class MainActivity extends AppCompatActivity {
         holdButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!compTurn){
-                    userScore += userTurnScore;
-                    userTurnScore = 0;
-                    userScoreTV.setText(Integer.toString(userScore));
-                    compTurn = true;
-//                    rollButton.setEnabled(false);
-                }
-                else{
-                    compScore += compTurnScore;
-                    compTurnScore = 0;
-                    computerScoreTV.setText(Integer.toString(compScore));
-                    compTurn = false;
-                }
+                userScore += userTurnScore;
+                userTurnScore = 0;
+                status.setText("It's computer's turn!");
+                refresh();
+                computerTurn();
             }
         });
 
@@ -111,16 +88,59 @@ public class MainActivity extends AppCompatActivity {
                 compScore = 0;
                 userTurnScore = 0;
                 compTurnScore = 0;
-
+                rollButton.setEnabled(true);
+                holdButton.setEnabled(true);
+                status.setText("New game!");
+                refresh();
             }
         });
     }
 
-    public int roller (){
+    public int roller () {
         Random r = new Random();
-        int index = r.nextInt(5); // generate a number between 0 and 5
+        int index = r.nextInt(6); // generate a number between 0 and 5
         diceView.setImageDrawable(dice[index]);
         return index + 1;
     }
 
+    public void refresh() {
+        userScoreTV.setText(Integer.toString(userScore));
+        computerScoreTV.setText(Integer.toString(compScore));
+    }
+
+    public void computerTurn() {
+        rollButton.setEnabled(false);
+        holdButton.setEnabled(false);
+
+        final Handler handler = new Handler();
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                int result = roller();
+
+                if(compTurnScore < 20 && result != 1) {
+                    compTurnScore += result;
+                    status.setText("Computer round score: " + Integer.toString(compTurnScore));
+                    handler.postDelayed(this, 2000);
+                }
+                else if(result == 1) {
+                    status.setText("Computer rolls 1! Now it's your turn!");
+                    rollButton.setEnabled(true);
+                    holdButton.setEnabled(true);
+                }
+                else {
+                    compScore += compTurnScore;
+                    computerScoreTV.setText(Integer.toString(compScore));
+                    status.setText("It's your turn!");
+                    rollButton.setEnabled(true);
+                    holdButton.setEnabled(true);
+                }
+//                refresh();
+            }
+        };
+        handler.postDelayed(r, 2000);
+        compTurnScore = 0;
+        refresh();
+
+    }
 }

@@ -10,10 +10,10 @@
 
     <TextView
         android:id="@+id/compTotalScore"
-        android:layout_width="22dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="1dp"
+        android:layout_width="41dp"
+        android:layout_height="26dp"
         android:text="0"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@+id/userTotalScore"
         app:layout_constraintEnd_toEndOf="@+id/computer"
         app:layout_constraintStart_toStartOf="@+id/computer"
@@ -25,16 +25,18 @@
         android:layout_height="0dp"
         android:layout_marginStart="45dp"
         android:text="Your score: "
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/userTotalScore"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/computer" />
 
     <TextView
         android:id="@+id/userTotalScore"
-        android:layout_width="25dp"
-        android:layout_height="29dp"
+        android:layout_width="40dp"
+        android:layout_height="27dp"
         android:layout_marginTop="68dp"
         android:text="0"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@+id/user"
         app:layout_constraintStart_toStartOf="@+id/user"
         app:layout_constraintTop_toTopOf="parent" />
@@ -46,6 +48,7 @@
         android:layout_marginTop="48dp"
         android:layout_marginEnd="47dp"
         android:text="Computer score: "
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -53,8 +56,7 @@
         android:id="@+id/dice1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="68dp"
-        android:layout_marginEnd="28dp"
+        android:layout_marginTop="72dp"
         android:contentDescription="@string/dice1"
         android:src="@drawable/dice1"
         app:layout_constraintEnd_toStartOf="@+id/compTotalScore"
@@ -97,10 +99,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="58dp"
         android:layout_marginEnd="59dp"
-        android:layout_marginBottom="36dp"
-        android:text="0"
+        android:layout_marginBottom="40dp"
+        android:text="New game!"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/dice1"
         app:layout_constraintEnd_toStartOf="@+id/computer"
+        app:layout_constraintHorizontal_bias="0.339"
         app:layout_constraintStart_toStartOf="@+id/dice1" />
 
 </android.support.constraint.ConstraintLayout>
